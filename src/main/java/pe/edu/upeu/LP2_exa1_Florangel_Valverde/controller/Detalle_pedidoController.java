@@ -18,7 +18,7 @@ import pe.edu.upeu.LP2_exa1_Florangel_Valverde.service.Detalle_pedidoService;
 
 
 @RestController
-@RequestMapping("/detalle_pedido")
+
 public class Detalle_pedidoController {
 	@Autowired
 	private Detalle_pedidoService detalle_pedidoService;

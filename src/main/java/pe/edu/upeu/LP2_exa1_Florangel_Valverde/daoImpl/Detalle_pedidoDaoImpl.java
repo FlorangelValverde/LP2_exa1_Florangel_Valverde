@@ -43,7 +43,7 @@ private JdbcTemplate JdbcTemplate;
 	@Override
 	public List<Map<String, Object>> readAll() {
 		// TODO Auto-generated method stub
-		String SQL = "select*from detalle_pedidp";
+		String SQL = "select * from detalle_pedido";
 		return JdbcTemplate.queryForList(SQL);
 	}
 
