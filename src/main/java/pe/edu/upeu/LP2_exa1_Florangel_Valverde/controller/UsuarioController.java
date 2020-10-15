@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,36 +16,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.upeu.LP2_exa1_Florangel_Valverde.entity.Usuario;
+import pe.edu.upeu.LP2_exa1_Florangel_Valverde.security.JwtUtil;
 import pe.edu.upeu.LP2_exa1_Florangel_Valverde.service.UsuarioService;
 
 @RestController
-@RequestMapping("/usuarios")
 public class UsuarioController {
 	@Autowired
-	private UsuarioService usuarioService;
-	
-	@GetMapping ("/lista")
-	public List<Map<String, Object>>listar(){
-		return usuarioService.readAll();
+	private AuthenticationManager authenticationManager;
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@GetMapping("/")
+	public String mensaje() {
+		return "Bienvenidos a Microservicios Síncronos";
 	}
-	@GetMapping("/{id}")
-	public Usuario read (@PathVariable int id) {
-		return usuarioService.read(id);
+
+	@PostMapping("/authenticate")
+	public String generateToken(@RequestBody Usuario authRequest) throws Exception {
+		try {
+			System.out.println(authRequest.getNomuser());
+			authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(authRequest.getNomuser(), authRequest.getClave()));
+		} catch (Exception ex) {
+			throw new Exception("Error: " + ex);
+		}
+		return jwtUtil.generateToken(authRequest.getNomuser());
 	}
-	@DeleteMapping("/delete/{id}")
-	public int delete (@PathVariable int id) {
-		return usuarioService.delete(id);
-	}
-	@PostMapping("/usuario")
-	public int create (@RequestBody Usuario usuario) {
-		return usuarioService.create(usuario);
-	}
-	@PutMapping ("edit/{id}")
-	public int update (@RequestBody Usuario usuario, @PathVariable int id) {
-		Usuario u = usuarioService.read(id);
-		u.setNomuser(usuario.getNomuser());
-		u.setClave(usuario.getClave());
-		u.setIdpersonas(usuario.getIdpersonas());
-		return usuarioService.update(u);
-	}
+
 }
